@@ -111,13 +111,13 @@ m_lvl = floor(global.playerXP / 10);
             <string>/// Upgrade screen
 if(m_newUpgrade)
 {
-    global.paused = true;
+    //global.paused = true;
     m_upgradeTimer--;
     
     if (m_upgradeTimer &lt; 0)
     {
         m_newUpgrade = false;
-        global.paused = false;
+        //global.paused = false;
     }
 }
 </string>

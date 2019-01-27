@@ -27,10 +27,10 @@
             <kind>1</kind>
             <string>/// Variable Initalization
 
-m_moveSpeed = 0;
 m_moveDirection = 0;
 
-m_rotateSpeed = 6;
+m_horizontalSpeed = 0;
+m_verticalSpeed = 0;
 
 angle_prev = 0;
 angle_next = 0;
@@ -179,15 +179,36 @@ m_prevRot = m_moveDirection;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Get input
+            <string>/// Cancel update when paused
 if (global.paused)
     exit;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Get input
 
-m_keyLeft = keyboard_check(vk_left);
-m_keyRight = keyboard_check(vk_right);
-m_keyUp = keyboard_check(vk_up);
-m_keyDown = keyboard_check(vk_down);
-m_keyShoot = keyboard_check(ord("Z"));
+m_keyLeft = (keyboard_check(vk_left) || keyboard_check(ord("A")));
+m_keyRight = (keyboard_check(vk_right) || keyboard_check(ord("D")));
+m_keyUp = (keyboard_check(vk_up) || keyboard_check(ord("W")));
+m_keyDown = (keyboard_check(vk_down) || keyboard_check(ord("S")));
+m_keyShoot = (mouse_check_button(mb_left));
 </string>
           </argument>
         </arguments>
@@ -210,11 +231,10 @@ m_keyShoot = keyboard_check(ord("Z"));
             <kind>1</kind>
             <string>/// Calculate directions and movement lerp
 
-// Directions
-m_moveSpeed = (m_keyUp * 2 + -m_keyDown);
-m_moveDirection += (m_keyLeft + -m_keyRight) * m_rotateSpeed;
+m_moveDirection = point_direction(x, y, mouse_x, mouse_y);
 
-m_speed = lerp(m_speed, m_moveSpeed * m_maxSpeed, 0.1);
+m_horizontalSpeed = (-m_keyLeft + m_keyRight) * m_maxSpeed;
+m_verticalSpeed = (-m_keyUp + m_keyDown) * m_maxSpeed;
 </string>
           </argument>
         </arguments>
@@ -237,8 +257,8 @@ m_speed = lerp(m_speed, m_moveSpeed * m_maxSpeed, 0.1);
             <kind>1</kind>
             <string>/// Calculate next position and move
 
-var horizontalSpeed = lengthdir_x(m_speed, m_moveDirection);
-var verticalSpeed = lengthdir_y(m_speed, m_moveDirection);
+var horizontalSpeed = m_horizontalSpeed
+var verticalSpeed = m_verticalSpeed
 
 if (place_meeting(x + horizontalSpeed, y + verticalSpeed, obj_collider))
 {
@@ -340,7 +360,9 @@ if (m_keyShoot &amp;&amp; m_shootCooldown &gt; 5)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (place_meeting(x, y, obj_enemy))
+            <string>/// Check for enemy collision
+
+if (place_meeting(x, y, obj_enemy))
 {
     if (m_shieldActive)
     {

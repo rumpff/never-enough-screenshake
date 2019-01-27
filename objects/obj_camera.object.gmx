@@ -166,11 +166,13 @@ if(m_flashTimer &gt; 0)
     m_flashTimer--;
     
     draw_set_color(c_white);
+    draw_set_alpha(m_flashTimer * 0.2);
     
     var w = display_get_gui_width();
     var h = display_get_gui_height();
     
     draw_rectangle(0, 0, w, h, false);
+    draw_set_alpha(1.0);
 }
 </string>
           </argument>
